@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "loto3contabilidade",
+    "slug": "loto3contabilidade",
+    "version": "1.0.0",
+    "assetBundlePatterns": ["**/*"],
+    "android": {
+      "permissions": ["INTERNET", "CAMERA"],
+      "useNextNetworkStack": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "82f73fb6-3657-4a06-9aab-f7995f504375"
+      }
+    }
+  }
+}
