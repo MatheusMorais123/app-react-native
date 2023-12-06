@@ -8,6 +8,7 @@ import Footer from '../../components/Footer'
 import axios from "axios";
 import { useNavigation } from '@react-navigation/native';
 
+import RNPickerSelect from 'react-native-picker-select';
 export default function DepartamentoFiscal() {
 
   const navigation = useNavigation();
@@ -33,8 +34,23 @@ export default function DepartamentoFiscal() {
         <TouchableOpacity style={styles.button} onPress={handle}>
           <Text style={styles.buttonText}>Enviar relatórios SITAE E SIGEL</Text>
         </TouchableOpacity>
-
+        
+        <TouchableOpacity style={styles.button} onPress={handle}>
+          <Text style={styles.buttonText}>Acessar Notas Fiscais</Text>
+          <RNPickerSelect
+            onValueChange={(value) => console.log(value)}
+            items={[
+                { label: 'Football', value: 'football' },
+                { label: 'Baseball', value: 'baseball' },
+                { label: 'Hockey', value: 'hockey' },
+            ]}
+            
+        />
+        </TouchableOpacity>
       </View>
+
+      
+
       <Footer />
     </ScrollView>
   );
@@ -57,7 +73,7 @@ const styles = StyleSheet.create({
     height: 125, 
   },
   button: {
-    margin: 120,
+    margin: 50,
     backgroundColor: '#fbfcfc',
     padding: 15,
     borderRadius: 8,

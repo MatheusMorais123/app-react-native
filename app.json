@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "loto3contabilidade",
-    "slug": "loto3contabilidade",
+    "slug": "loto3",
     "version": "1.0.0",
     "assetBundlePatterns": ["**/*"],
     "android": {
@@ -10,7 +10,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "82f73fb6-3657-4a06-9aab-f7995f504375"
+        "projectId": "06236302-5b8c-48af-9a99-6cdd53efeb34" 
       }
     }
   }
