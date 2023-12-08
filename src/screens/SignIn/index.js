@@ -6,13 +6,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useNavigation } from '@react-navigation/native';
 import Header from '../../components/Header';
 import { TextInputMask } from 'react-native-masked-text';
-import * as ImagePicker from 'expo-image-picker';
-import { Camera } from 'expo-camera';
 export default function Login() {
 
   const [cnpj, setCnpj] = useState('')
   const [senha_hash, setSenha_hash] = useState('')
-  const [cameraPermission, setCameraPermission] = useState(null); 
   const [errorMessages, setErrorMessages] = useState({
     cnpj: '',
     senha_hash: '',
@@ -21,14 +18,6 @@ export default function Login() {
 
 
 
-  useEffect(() => {
-    const getPermissions = async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setCameraPermission(status === 'granted');
-    };
-
-    getPermissions();
-  }, []);
 
   const navigation = useNavigation();
 
