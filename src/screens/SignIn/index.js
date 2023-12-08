@@ -1,22 +1,34 @@
 import { StatusBar } from 'expo-status-bar';
 import axios from "axios";
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Image} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image,ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useNavigation } from '@react-navigation/native';
 import Header from '../../components/Header';
 import { TextInputMask } from 'react-native-masked-text';
+import * as ImagePicker from 'expo-image-picker';
+import { Camera } from 'expo-camera';
 export default function Login() {
 
   const [cnpj, setCnpj] = useState('')
   const [senha_hash, setSenha_hash] = useState('')
-
+  const [cameraPermission, setCameraPermission] = useState(null); 
   const [errorMessages, setErrorMessages] = useState({
     cnpj: '',
     senha_hash: '',
     error: '',
   });
 
+
+
+  useEffect(() => {
+    const getPermissions = async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setCameraPermission(status === 'granted');
+    };
+
+    getPermissions();
+  }, []);
 
   const navigation = useNavigation();
 
@@ -53,35 +65,27 @@ export default function Login() {
           'Content-Type': 'application/json',
         },
       });
-      //Alert(response.data)
-      console.log('Resposta do servidor:', response.data);
-      console.log(response)
-      // Verificar se 'id' está definido antes de salvá-lo
+    
       if (response.data.id !== undefined) {
         // Salvar userId e admin no AsyncStorage
         await AsyncStorage.setItem('userId', response.data.id.toString());
         await AsyncStorage.setItem('admin', response.data.admin ? 'true' : 'false');
-
-        console.log('ID do usuário salvo no AsyncStorage:', response.data.id);
-        console.log('Admin do usuário salvo no AsyncStorage:', response.data.admin);
-
-        // Navegar para a tela adequada com base no campo 'admin'
+        await AsyncStorage.setItem('cnpj', cnpj);
+        
         if (response.data.admin) {
-          // Se o usuário for um admin, navegue para a tela de administração
+        
           console.log("Caiu no if - Admin");
           navigation.navigate('Admin');
         } else {
-          // Se o usuário não for um admin, siga a lógica atual
+         
           const perfilAtualizado = response.data.perfilAtualizado;
           const userEmail = response.data.email;
 
           if (!perfilAtualizado && (userEmail !== null && userEmail !== '')) {
-            console.log("Caiu no if - Início");
-            //Alert(response.data)
+           
             navigation.navigate('Inicio');
           } else {
-            // Alert(response.data)
-            console.log(response.data)
+          
             console.log("Caiu no else - Perfil");
             navigation.navigate('Perfil');
           }
@@ -155,7 +159,9 @@ export default function Login() {
 
         <StatusBar style="auto" />
       </View>
-    </ScrollView>
+
+      </ScrollView>
+
 
   );
 }
@@ -163,14 +169,14 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 50,
+    marginTop: 35,
   },
   containerHeader: {
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
     flex: 1,
-    marginLeft: -40, // Ajuste conforme necessário
-    marginTop: 20, // Ajuste conforme necessário
+    marginLeft: -40, 
+    marginTop: 20,
   },
   logo: {
     width: 300, // Ajuste conforme necessário

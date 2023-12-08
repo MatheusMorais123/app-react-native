@@ -17,7 +17,7 @@ export default function Initial() {
     };
 
     return (
-        <ScrollView>
+        
             <View style={styles.container}>
                 {/* logo e background */}
                 <ImageBackground
@@ -43,7 +43,7 @@ export default function Initial() {
                     </View>
                 </ImageBackground>
             </View>
-        </ScrollView>
+        
     );
 }
 
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0, // Posiciona a partir do fundo da tela
         width: '100%', // Faz com que ocupe a largura total
-        marginBottom: 90, // Ajuste conforme necessário
+        marginBottom: '30%', // Ajuste conforme necessário
     },
     button: {
         backgroundColor: '#293998',

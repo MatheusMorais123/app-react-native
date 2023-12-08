@@ -174,6 +174,8 @@ export default function Home() {
     fetchUserData()
   }, [])
 
+
+  
   const handleLogoff = async () => {
     try {
       // Remova o token de autenticação armazenado localmente (usando AsyncStorage, por exemplo)
