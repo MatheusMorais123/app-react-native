@@ -1,123 +1,90 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Image, Alert, Button } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import * as Permissions from 'expo-permissions';
-import { TextInputMask } from 'react-native-masked-text';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer'
-import axios from "axios";
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Image,Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNPickerSelect from 'react-native-picker-select';
+//import RNFS from 'react-native-fs';
+
 export default function DepartamentoFiscal() {
+  const [mes, setMes] = useState(null);
+  const [items, setItems] = useState([]);
+  const [selectedMesId, setSelectedMesId] = useState(null);
+  const [pickerValue, setPickerValue] = useState(null); // Alterado para iniciar com null
+  const [downloadButtonDisabled, setDownloadButtonDisabled] = useState(true);
 
   const navigation = useNavigation();
 
   const handle = () => {
-    // Redirecionamento para a tela desejada
     navigation.navigate('Home');
   };
 
-
-  const [nfOptions, setNfOptions] = useState([]);
-  const [cnpj, setCnpj] = useState('');
-
-  /* useEffect(() => {
-    const fetchCnpj = async () => {
-      try {
-        // Recupera o CNPJ armazenado no AsyncStorage
-        const storedCnpj = await AsyncStorage.getItem('cnpj');
-
-        if (storedCnpj) {
-          // Se o CNPJ foi encontrado, atualiza o estado
-          setCnpj(storedCnpj);
-
-          // Faz a requisição para o endpoint que retorna as opções de NF para o CNPJ específico
-          axios.get(`62.72.9.100:3000/envio/${storedCnpj}`)
-            .then(response => {
-              // Preenche as opções com os dados da resposta
-              setNfOptions(response.data);
-            })
-            .catch(error => {
-              console.error('Erro ao obter opções de NF:', error);
-            });
-        }
-      } catch (error) {
-        console.error('Erro ao recuperar CNPJ do AsyncStorage:', error);
-      }
-    };
-
-    fetchCnpj();
-  }, []); */
-
-  const handleSelectChange = (value) => {
-    console.log("testee", value);
-    // Faça algo com o valor selecionado, se necessário
+  /* const downloadFile = async () => {
+    // Sua lógica de download aqui
+    // Certifique-se de usar o selectedMesId para obter o mês correto
+    console.log('Baixando arquivo para o mês selecionado:', selectedMesId);
   };
+ */
 
-  /* useEffect(() => {
-    const fetchCnpj = async () => {
-      try {
-        // Recupera o CNPJ armazenado no AsyncStorage
-        const storedCnpj = await AsyncStorage.getItem('cnpj');
+  /* const downloadFile = async () => {
+    try {
+      if (selectedMesId) {
+        // Use o ID selecionado para construir a URL da sua API
+        const downloadUrl = `http://62.72.9.100:3000/envio-download/${selectedMesId}`;
   
-        if (storedCnpj) {
-          // Se o CNPJ foi encontrado, atualiza o estado
-          setCnpj(storedCnpj);
+        // Realize a requisição para baixar o arquivo
+        const response = await fetch(downloadUrl);
   
-          // Faz a requisição para o endpoint que retorna as opções de NF para o CNPJ específico
-          axios.get(`http://62.72.9.100:3000/envio/37.121.797/0001-95`)
-
-            .then(response => {
-              console.log('Dados recebidos da API:', response.data);
-              console.log(storedCnpj)
-              // Mapeia as opções para incluir a data de criação no rótulo
-              const formattedOptions = response.data.map(option => ({
-                label: `${option.label} - ${formatDate(option.created_at)}`,
-                value: option.value,
-              }));
+        // Verifique se a resposta foi bem-sucedida (código de status 200)
+        if (response.ok) {
+          // Converta a resposta para um blob (tipo de dado de arquivo)
+          const blob = await response.blob();
   
-              // Preenche as opções com os dados formatados
-              setNfOptions(formattedOptions);
-            })
-            .catch(error => {
-              console.error('Erro ao obter opções de NF:', error);
-            });
+          // Crie um URL temporário para o blob
+          const url = window.URL.createObjectURL(blob);
+  
+          // Crie um link temporário e clique nele para iniciar o download
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `arquivo_${selectedMesId}.xlsx`;
+          a.click();
+  
+          // Limpe o URL temporário após o download
+          window.URL.revokeObjectURL(url);
+        } else {
+          console.error('Erro ao baixar o arquivo:', response.statusText);
         }
-      } catch (error) {
-        console.error('Erro ao recuperar CNPJ do AsyncStorage:', error);
+      } else {
+        console.warn('Nenhum mês selecionado para download.');
       }
-    };
-  
-    fetchCnpj();
-  }, []); */
+    } catch (error) {
+      console.error('Erro durante o download:', error);
+    }
+  };
+   */
 
+  const downloadFile = async () => {
+    if (selectedMesId !== null) {
+      // URL do arquivo que você deseja baixar
+      const downloadUrl = `http://62.72.9.100:3000/envio-download/${selectedMesId}`;
 
-  /* useEffect( async ()  => {
-    const storedCnpj = await AsyncStorage.getItem('cnpj');
-    console.log('CNPJ recuperado do AsyncStorage:', storedCnpj);
-    fetch('http://62.72.9.100:3000/envio/37.121.797/0001-95?sort=createdAt')
-      .then((response) => response.json())
-      .then((data) => {
-        const formattedItems = data.nf.map((item) => {
-          const date = new Date(item.createdAt);
-          const options = { month: 'long' };
-          const month = new Intl.DateTimeFormat('pt-BR', options).format(date);
-  
-          return {
-            label: `${month}`,  // Adapte conforme necessário
-            value: item.sigla,
-          };
+      // Abre o navegador com a URL do download
+      Linking.openURL(downloadUrl)
+        .then(() => {
+          console.log('Navegador aberto com sucesso');
+        })
+        .catch((error) => {
+          console.error('Erro ao abrir o navegador:', error);
         });
-  
-        setItems(formattedItems);
-      });
-  }, []); */
+    } else {
+      console.warn('Nenhum mês selecionado para download.');
+    };
+  };
+   
 
   useEffect(() => {
+    console.log('useEffect - Executando fetchItems');
     const fetchItems = async () => {
       try {
-        // Recupera o CNPJ armazenado no AsyncStorage
         const storedCnpj = await AsyncStorage.getItem('cnpj');
         console.log('CNPJ recuperado do AsyncStorage:', storedCnpj);
 
@@ -125,79 +92,39 @@ export default function DepartamentoFiscal() {
           const apiUrl = `http://62.72.9.100:3000/envio/${encodeURIComponent(storedCnpj)}?sort=createdAt`;
           console.log('API URL:', apiUrl);
 
-          fetch(apiUrl)
-            .then((response) => response.json())
-            .then((data) => {
-              const formattedItems = data.nf.map((item) => {
-                const date = new Date(item.createdAt);
-                const options = { month: 'long' };
-                const month = new Intl.DateTimeFormat('pt-BR', options).format(date);
+          const response = await fetch(apiUrl);
+          const data = await response.json();
+          console.log('useEffect - Dados obtidos:', data);
 
-                return {
-                  label: `${month}`,  // Adapte conforme necessário
-                  value: item.sigla,
-                };
-              });
+          const formattedItems = data.nf.map((item) => {
+            const date = new Date(item.createdAt);
+            const options = { month: 'long' };
+            const month = new Intl.DateTimeFormat('pt-BR', options).format(date);
+            console.log('ID do item:', item.id);
+            setSelectedMesId(item.id);
+            return {
+              label: `${month}`,
+              value: item.id,
+            };
+          });
 
-              setItems(formattedItems);
-            })
-            .catch((error) => {
-              console.error('Erro ao obter dados da API:', error);
-              // Trate o erro conforme necessário
-            });
+          setItems(formattedItems);
+          if (formattedItems.length > 0) {
+            console.log('useEffect - Definindo pickerValue para null para permitir seleção inicial');
+            setPickerValue(null); // Defina para null ou undefined para permitir seleção inicial
+            setDownloadButtonDisabled(false); // Habilita o botão de download quando há itens disponíveis
+          }
         }
       } catch (error) {
         console.error('Erro ao recuperar CNPJ do AsyncStorage:', error);
-        // Trate o erro conforme necessário
       }
     };
 
     fetchItems();
   }, []);
 
-  /* useEffect(() => {
-    const fetchCnpj = async () => {
-      try {
-        // Recupera o CNPJ armazenado no AsyncStorage
-        const storedCnpj = await AsyncStorage.getItem('cnpj');
-  
-        if (storedCnpj) {
-          fetch(`http://62.72.9.100:3000/envio/${storedCnpj}?sort=createdAt`)
-            .then((response) => response.json())
-            .then((data) => {
-              const formattedItems = data.nf.map((item) => {
-                const date = new Date(item.createdAt);
-                const options = { month: 'long' };
-                const month = new Intl.DateTimeFormat('pt-BR', options).format(date);
-  
-                return {
-                  label: `${month}`,  // Adapte conforme necessário
-                  value: item.sigla,
-                };
-              });
-  
-              setItems(formattedItems);
-            })
-            .catch((error) => {
-              console.error('Erro ao obter dados da API:', error);
-            });
-        }
-      } catch (error) {
-        console.error('Erro ao recuperar CNPJ do AsyncStorage:', error);
-      }
-    };
-  
-    fetchCnpj();
-  }, []);
-   */
-
-  const [estado, setEstado] = useState('')
-
-  const [items, setItems] = useState([]);
-  const [itemsCity, setItemsCity] = useState([]);
   return (
     <ScrollView>
-
       <View style={styles.containerHeader}>
         <Image
           resizeMode="cover"
@@ -205,46 +132,43 @@ export default function DepartamentoFiscal() {
           style={styles.logo}
         />
       </View>
-
       <View style={styles.container}>
-
         <TouchableOpacity style={styles.button} onPress={handle}>
           <Text style={styles.buttonText}>Enviar relatórios SITAE E SIGEL</Text>
         </TouchableOpacity>
-
         <TouchableOpacity style={styles.button}>
-          {/*  <Text style={styles.buttonText1}>Acessar notas fiscais</Text> */}
-          {/* <RNPickerSelect
-            onValueChange={(value) => setEstado(value)}
-            items={items}
-            value={estado}
-            placeholder={{ label: 'Acessar notas fiscais', value: null }}
-            style={styles.buttonText1}
-        /> */}
           <RNPickerSelect
-            onValueChange={(value) => setEstado(value)}
+            onValueChange={(value) => {
+              console.log('onValueChange - Valor selecionado:', value);
+              setSelectedMesId(value);
+              setMes(value);
+              setPickerValue(value); // Atualize o valor do picker
+            }}
             items={items}
-            value={estado}
+            value={pickerValue} // Atualizado para refletir o estado 'pickerValue'
             placeholder={{ label: 'Acessar Notas Fiscais', value: null }}
             style={{
               placeholder: {
                 color: '#005ca7',
-                fontWeight: 'bold',
+                fontWeight: '900',
                 fontSize: 18,
                 textAlign: 'center'
               },
             }}
           />
-
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: downloadButtonDisabled ? '#d3d3d3' : '#fbfcfc' }]}
+          onPress={downloadFile}
+          disabled={downloadButtonDisabled}
+        >
+          <Text style={styles.buttonText}>Baixar Notas Fiscais</Text>
         </TouchableOpacity>
       </View>
-
-
-
-      <Footer />
     </ScrollView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',

@@ -121,6 +121,10 @@ export default function ResetPassword() {
             <StatusBar style="auto" />
             {/* <Footer /> */}
         </View>
+
+
+
+
     );
 }
 

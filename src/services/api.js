@@ -1,7 +1,8 @@
-/* import axios from "axios";
+import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://62.72.9.100:3000",
+ /*  baseURL: "https://glamurama-wauykig2.b4a.run", */
+ baseURL: "http://186.233.225.227:8080",
 });
 
-export default api;  */
+export default api;

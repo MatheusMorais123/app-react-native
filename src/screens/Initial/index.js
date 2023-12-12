@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, ImageBackground, Image } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import * as Permissions from 'expo-permissions';
-import { TextInputMask } from 'react-native-masked-text';
-import Header from '../../components/Header';
+//import * as ImagePicker from 'expo-image-picker';
+//import * as Permissions from 'expo-permissions';
+//import { TextInputMask } from 'react-native-masked-text';
+
 import axios from "axios";
 import { useNavigation } from '@react-navigation/native';
 

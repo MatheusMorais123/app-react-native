@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import * as Permissions from 'expo-permissions';
+import { Camera } from 'expo-camera';
 import { TextInputMask } from 'react-native-masked-text';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
@@ -32,8 +32,8 @@ export default function Home() {
 
 
   const pickImage = async (setImageFunction) => {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA, Permissions.CAMERA_ROLL);
-
+    const { status } = await Camera.requestCameraPermissionsAsync();
+  
     if (status === 'granted') {
       const result = await ImagePicker.launchCameraAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -41,7 +41,7 @@ export default function Home() {
         aspect: [4, 3],
         quality: 1,
       });
-
+  
       if (!result.cancelled) {
         setImageFunction(result.assets[0].uri);
       }
@@ -49,19 +49,17 @@ export default function Home() {
       console.error('Permissões não concedidas');
     }
   };
+  
 
   useEffect(() => {
     const getPermissions = async () => {
-      const { status } = await Permissions.askAsync(
-        Permissions.CAMERA,
-        Permissions.CAMERA_ROLL
-      );
-
+      const { status } = await Camera.requestCameraPermissionsAsync();  // Substitua Permissions.askAsync por Camera.requestCameraPermissionsAsync
+  
       if (status !== 'granted') {
         Alert.alert('Permissões não concedidas.');
       }
     };
-
+  
     getPermissions();
   }, []);
 

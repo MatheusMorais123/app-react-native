@@ -1,4 +1,4 @@
-package com.loto3contabilidade;
+package com.glamuramareactnative;
 
 import android.os.Build;
 import android.os.Bundle;

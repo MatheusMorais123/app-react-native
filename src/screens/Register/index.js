@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import axios from "axios";
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
 import { useNavigation } from '@react-navigation/native';
 import { CheckBox } from 'react-native-elements';
 import Header from '../../components/Header';
-
+import Footer from '../../components/Footer'
+import RNPickerSelect from 'react-native-picker-select';
 
 export default function Register() {
   const [nome, setNome] = useState('');
@@ -43,7 +44,11 @@ export default function Register() {
     fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados')
       .then((response) => response.json())
       .then((data) => {
-        setItems(data);
+        const formattedItems = data.map((item) => ({
+          label: item.nome,
+          value: item.sigla,
+        }));
+        setItems(formattedItems);
       });
   }, []);
 
@@ -52,23 +57,26 @@ export default function Register() {
       fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${estado}/municipios`)
         .then((response) => response.json())
         .then((data) => {
-          setItemsCity(data);
+          const formattedCities = data.map((city) => ({
+            label: city.nome,
+            value: city.nome,
+          }));
+          setItemsCity(formattedCities);
         });
     }
   }, [estado]);
 
   const renderProductList = () => {
     return items.map((e) => (
-      <Picker.Item key={e.id} label={e.nome} value={e.sigla} />
+      <RNPickerSelect.Item key={e.value} label={e.label} value={e.value} />
     ));
   };
 
   const renderCity = () => {
     return itemsCity.map((e) => (
-      <Picker.Item key={e.id} label={e.nome} value={e.nome} />
+      <RNPickerSelect.Item key={e.value} label={e.label} value={e.value} />
     ));
   };
-
 
   function handleLogin() {
     navigation.navigate('SignIn');
@@ -76,7 +84,7 @@ export default function Register() {
 
   const handleSubmit = async () => {
 
-    const errors = { 
+    const errors = {
       nome: '',
       email: '',
       senha_hash: '',
@@ -85,34 +93,34 @@ export default function Register() {
       estado: '',
     }
 
-    if(!nome){
+    if (!nome) {
       errors.nome = 'Nome é obrigatório'
 
     }
 
-    if(!email){
+    if (!email) {
       errors.email = 'E-mail é obrigatório'
 
     }
 
-    if(!senha_hash){
+    if (!senha_hash) {
       errors.senha_hash = 'Senha  é obrigatório'
-      
+
     }
 
-    if(!celular){
+    if (!celular) {
       errors.celular = 'Celular é obrigatório'
-      
+
     }
 
-    if(!cidade){
+    if (!cidade) {
       errors.cidade = 'Cidade é obrigatório'
-      
+
     }
 
-    if(!estado){
+    if (!estado) {
       errors.estado = 'Estado é obrigatório'
-      
+
     }
 
     setErrorMessages(errors);
@@ -133,17 +141,16 @@ export default function Register() {
           'Content-Type': 'application/json',
         },
       });
+      
+      Alert.alert('Cadastro realizado com sucesso')
 
-      console.log(response)
-      console.log(formData)
-      console.log('Resposta do servidor:', response.data);
     } catch (error) {
       console.error('Erro ao enviar formulário:', error);
-      if(error.response){
-        if(error.response.status == 400){
+      if (error.response) {
+        if (error.response.status == 400) {
           setErrorMessages({ ...errors, email: 'E-mail já cadastrado' });
         }
-        if(error.response.status == 402){
+        if (error.response.status == 402) {
           setErrorMessages({ ...errors, email: 'Campos ausentes' });
         }
       }
@@ -154,7 +161,7 @@ export default function Register() {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <Header />
+       {/*  <Header /> */}
 
         <Text style={styles.label}>Nome</Text>
         <TextInput
@@ -162,7 +169,7 @@ export default function Register() {
           onChangeText={(text) => setNome(text)}
           value={nome}
         />
-         {errorMessages.nome && (
+        {errorMessages.nome && (
           <Text style={styles.errorMessage}>{errorMessages.nome}</Text>
         )}
 
@@ -172,7 +179,7 @@ export default function Register() {
           onChangeText={(text) => setEmail(text)}
           value={email}
         />
-         {errorMessages.email && (
+        {errorMessages.email && (
           <Text style={styles.errorMessage}>{errorMessages.email}</Text>
         )}
         <Text style={styles.label}>Senha</Text>
@@ -181,7 +188,7 @@ export default function Register() {
           onChangeText={(text) => setSenhaHash(text)}
           value={senha_hash}
         />
-         {errorMessages.senha_hash && (
+        {errorMessages.senha_hash && (
           <Text style={styles.errorMessage}>{errorMessages.senha_hash}</Text>
         )}
 
@@ -192,14 +199,14 @@ export default function Register() {
           value={celular}
         />
 
-         {errorMessages.celular && (
+        {errorMessages.celular && (
           <Text style={styles.errorMessage}>{errorMessages.celular}</Text>
         )}
 
-        <Text style={styles.label}>Estado</Text>
+        {/* <Text style={styles.label}>Estado</Text>
         <Picker
           selectedValue={estado}
-          style={styles.input}
+          style={styles.inputs} 
           onValueChange={(itemValue) => {
             setEstado(itemValue);
           }}
@@ -209,12 +216,12 @@ export default function Register() {
 
         {errorMessages.estado && (
           <Text style={styles.errorMessage}>{errorMessages.estado}</Text>
-        )}
+        )} */}
 
-        <Text style={styles.label}>Cidade</Text>
+        {/*  <Text style={styles.label}>Cidade</Text>
         <Picker
           selectedValue={cidade}
-          style={styles.input}
+          style={styles.inputs} 
           onValueChange={(itemValue) => {
             setCidade(itemValue);
           }}
@@ -224,7 +231,33 @@ export default function Register() {
         
         {errorMessages.cidade && (
           <Text style={styles.errorMessage}>{errorMessages.cidade}</Text>
-        )}
+        )} */}
+
+        
+          <Text style={styles.label}>Estado</Text>
+          <RNPickerSelect
+            onValueChange={(value) => setEstado(value)}
+            items={items}
+            value={estado}
+            placeholder={{ label: 'Selecione um estado', value: null }}
+            style={pickerSelectStyles}
+          />
+          {errorMessages.estado && (
+            <Text style={styles.errorMessage}>{errorMessages.estado}</Text>
+          )}
+
+          <Text style={styles.label}>Cidade</Text>
+          <RNPickerSelect
+            onValueChange={(value) => setCidade(value)}
+            items={itemsCity}
+            value={cidade}
+            placeholder={{ label: 'Selecione uma cidade', value: null }}
+            style={pickerSelectStyles}
+          />
+          {errorMessages.cidade && (
+            <Text style={styles.errorMessage}>{errorMessages.cidade}</Text>
+          )}
+        
 
         <View style={styles.checkboxContainer}>
           <View style={styles.checkboxRow}>
@@ -243,6 +276,8 @@ export default function Register() {
           </View>
         </View>
 
+       
+
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={handleSubmit}>
             <Text style={styles.buttonText}>Gravar</Text>
@@ -253,7 +288,7 @@ export default function Register() {
         </View>
 
         <StatusBar style="auto" />
-        
+        <Footer />
       </View>
     </ScrollView>
   );
@@ -263,6 +298,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: '20%'
   },
   label: {
     fontSize: 16,
@@ -274,11 +310,21 @@ const styles = StyleSheet.create({
   input: {
     height: 40,
     width: '80%',
-    borderColor: 'rgb(160, 15, 255)',
+    borderColor: '#4b9d4a',
     borderWidth: 1,
     paddingHorizontal: 10,
     borderRadius: 1,
     marginBottom: 25,
+  },
+  inputs: {
+    height: 40,
+    width: '80%',
+    position: 'relative',
+    borderColor: '#4b9d4a',
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    borderRadius: 1,
+    marginLeft: '20%'
   },
   checkboxContainer: {
     width: '70%',
@@ -299,14 +345,14 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
-    backgroundColor: 'rgb(160, 15, 255)',
+    backgroundColor: '#4b9d4a',
     borderRadius: 40,
     margin: 5,
     fontSize: 14,
     paddingVertical: 16,
   },
   buttonText: {
-    color: 'white',
+    color: '#000',
     textAlign: 'center',
   },
   errorMessage: {
@@ -314,4 +360,26 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginBottom: 3,
   },
+});
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    height: 40,
+    width: '80%',
+    borderColor: 'rgb(160, 15, 255)',
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    borderRadius: 1,
+    marginBottom: 25,
+    marginLeft: '10%'
+  },
+  inputAndroid: {
+    height: 40,
+    width: '80%',
+    borderColor: 'rgb(160, 15, 255)',
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    borderRadius: 1,
+    marginBottom: 25,
+    marginLeft: '10%'
+  }
 });

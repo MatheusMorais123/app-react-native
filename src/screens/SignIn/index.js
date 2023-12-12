@@ -16,11 +16,7 @@ export default function Login() {
     error: '',
   });
 
-
-
-
   const navigation = useNavigation();
-
 
   const handleLogin = async () => {
     const errors = {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Image, Alert, Button } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import * as Permissions from 'expo-permissions';
+//import * as ImagePicker from 'expo-image-picker';
+//import * as Permissions from 'expo-permissions';
 import { TextInputMask } from 'react-native-masked-text';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer'
@@ -35,7 +35,7 @@ export default function DepartamentoFiscal() {
         </TouchableOpacity>
 
       </View>
-      <Footer />
+     
     </ScrollView>
   );
 }

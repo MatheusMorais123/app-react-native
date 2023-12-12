@@ -5,8 +5,7 @@
     "version": "1.0.0",
     "assetBundlePatterns": ["**/*"],
     "android": {
-      "permissions": ["INTERNET", "CAMERA"],
-      "useNextNetworkStack": true
+      "permissions": ["INTERNET", "CAMERA"]
     },
     "extra": {
       "eas": {
